@@ -7,7 +7,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -25,11 +27,12 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
         );
-        //getFilteredMealsWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);
 
-        System.out.println(getFilteredMealsWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
-//        .toLocalDate();
-//        .toLocalTime();
+       List<UserMealWithExceed> mealsWithExceed =
+        getFilteredMealsWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);
+
+        mealsWithExceed.stream().forEach(System.out::println);
+
     }
 
     public static List<UserMealWithExceed> getFilteredMealsWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -44,11 +47,14 @@ public class UserMealsUtil {
 //                            (calories==null ? 0 : calories) + userMeal.getCalories());
 //        }
         //Java 8 Stream API
-        Map<LocalDate, Integer> mealCounter = new HashMap<>();
-        mealList
-                .stream()
-                .forEach(m -> mealCounter.put(m.getDateTime().toLocalDate(),
-                        Optional.ofNullable(mealCounter.get(m.getDateTime().toLocalDate())).orElse(0) + m.getCalories()));
+//        Map<LocalDate, Integer> mealCounter = new HashMap<>();
+//        mealList
+//                .stream()
+//                .forEach(m -> mealCounter.put(m.getDateTime().toLocalDate(),
+//                        Optional.ofNullable(mealCounter.get(m.getDateTime().toLocalDate())).orElse(0) + m.getCalories()));
+
+        Map<LocalDate, Integer> mealCounter = mealList.stream().collect(Collectors.groupingBy(m->m.getDateTime().toLocalDate(),
+                                                        Collectors.summingInt(UserMeal::getCalories)));
 
         //Java7
 //        List<UserMealWithExceed> result = new ArrayList<>();
