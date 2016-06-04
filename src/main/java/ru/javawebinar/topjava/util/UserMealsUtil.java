@@ -72,5 +72,9 @@ public class UserMealsUtil {
                         .map(u -> new UserMealWithExceed(u, mealCounter.get(u.getDateTime().toLocalDate()) > caloriesPerDay))
                         .collect(Collectors.toList());
         return result;
+
+
+
+
     }
 }
