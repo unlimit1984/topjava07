@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Data
 public class UserMealWithExceed {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final LocalDateTime dateTime;
     private final String description;
