@@ -1,34 +1,25 @@
 package ru.javawebinar.topjava.model;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * GKislin
  * 11.01.2015.
  */
+@Data
 public class UserMealWithExceed {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+
     private final LocalDateTime dateTime;
-
     private final String description;
-
     private final int calories;
-
     private final boolean exceed;
 
-    public UserMealWithExceed(LocalDateTime dateTime, String description, int calories, boolean exceed) {
-        this.dateTime = dateTime;
-        this.description = description;
-        this.calories = calories;
-        this.exceed = exceed;
-    }
-
-    @Override
-    public String toString() {
-        return "UserMealWithExceed{" +
-                "dateTime=" + dateTime +
-                ", description='" + description + '\'' +
-                ", calories=" + calories +
-                ", exceed=" + exceed +
-                '}';
+    private String formatDateTime;
+    public String getFormatDateTime(){
+        return dateTime.format(formatter);
     }
 }
