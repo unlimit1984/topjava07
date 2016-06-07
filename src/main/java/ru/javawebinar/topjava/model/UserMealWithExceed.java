@@ -17,6 +17,7 @@ public class UserMealWithExceed {
     private final String description;
     private final int calories;
     private final boolean exceed;
+    private final int id;
 
     private String formatDateTime;
     public String getFormatDateTime(){

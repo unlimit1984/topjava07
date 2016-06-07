@@ -17,15 +17,17 @@
     <h2><a href="index.html">Home</a></h2>
     <h2>Meal list</h2>
 
+    <a href="meals?action=update">Create new</a>
     <table border="2px">
 
         <tr>
             <td>Date</td>
             <td>Description</td>
             <td>Calories</td>
+            <td colspan="2">Action</td>
         </tr>
 
-    <c:forEach items="${requestScope.mealList}" var="meal">
+    <c:forEach items="${mealList}" var="meal">
         <c:choose>
             <c:when test="${meal.exceed}">
                 <tr style="color: red">
@@ -43,11 +45,16 @@
             <td>
                 <c:out value="${meal.calories}"></c:out>
             </td>
+            <td>
+                <a href="meals?action=update&id=<c:out value="${meal.id}"></c:out>">Update</a>
+            </td>
+            <td>
+                <a href="meals?action=delete&id=<c:out value="${meal.id}"></c:out>">Delete</a>
+            </td>
         </tr>
 
     </c:forEach>
 
     </table>
-
 </body>
 </html>
