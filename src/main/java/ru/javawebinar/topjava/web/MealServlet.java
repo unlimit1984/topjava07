@@ -3,8 +3,9 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExceed;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.UserMealsUtil;
-import ru.javawebinar.topjava.web.dao.CRUDRepository;
+import ru.javawebinar.topjava.web.dao.UserMealRepository;
 import ru.javawebinar.topjava.web.dao.MemoryRepositoryIml;
 
 import javax.servlet.ServletException;
@@ -30,7 +31,7 @@ public class MealServlet extends HttpServlet {
 
     private static final Logger LOG = getLogger(MealServlet.class);
 
-    private CRUDRepository repository;
+    private UserMealRepository repository;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -56,7 +57,7 @@ public class MealServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if(action==null){
-            List<UserMealWithExceed> meals = UserMealsUtil.getFilteredWithExceeded(repository.getAllUserMeals(), LocalTime.MIN, LocalTime.MAX, 2000);
+            List<UserMealWithExceed> meals = UserMealsUtil.getFilteredWithExceeded(repository.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
             request.setAttribute("mealList", meals);
             request.getRequestDispatcher("/mealList.jsp").forward(request,response);
         }
@@ -64,7 +65,7 @@ public class MealServlet extends HttpServlet {
             String mealId = request.getParameter("id");
             if(mealId!=null){
                 Integer id = Integer.valueOf(mealId);
-                UserMeal m =  repository.getMealById(id);
+                UserMeal m =  repository.getById(id);
                 request.setAttribute("meal", new UserMealWithExceed(m.getDateTime(),m.getDescription(), m.getCalories(),false, m.getId()));
             }
             request.getRequestDispatcher("/meal.jsp").forward(request, response);
@@ -79,7 +80,7 @@ public class MealServlet extends HttpServlet {
             }
             LocalDateTime dateTime;
             try{
-                dateTime = LocalDateTime.parse(request.getParameter("dateTime"),formatter);
+                dateTime = DateTimeUtil.fromString(request.getParameter("dateTime"));
             } catch (DateTimeParseException e){
                 LOG.error(e.getParsedString());
                 dateTime = LocalDateTime.now();
@@ -87,27 +88,18 @@ public class MealServlet extends HttpServlet {
 
             String id = request.getParameter("id");
             if(id==null || id.isEmpty()){       //new UserMeal
-                int maxId=0;
-                try {
-                    maxId = repository.getAllUserMeals()
-                            .stream()
-                            .max((m1, m2) -> Integer.compare(m1.getId(), m2.getId())).get().getId();
-                }
-                catch(NoSuchElementException e){
-                    LOG.error(e.getMessage());
-                }
-                UserMeal m = new UserMeal(dateTime,description,calories,maxId+1);
-                repository.addMeal(m);
+                UserMeal m = new UserMeal(dateTime,description,calories);
+                repository.add(m);
             } else{                             //existing UserMeal
                 int mealId = Integer.valueOf(request.getParameter("id"));
                 UserMeal m = new UserMeal(dateTime,description,calories,mealId);
-                repository.updateMeal(m);
+                repository.update(m);
             }
             response.sendRedirect("meals");
 
         } else if(action.equalsIgnoreCase("delete")){
             Integer id = Integer.valueOf(request.getParameter("id"));
-            repository.deleteMeal(id);
+            repository.delete(id);
             response.sendRedirect("meals");
         }
     }

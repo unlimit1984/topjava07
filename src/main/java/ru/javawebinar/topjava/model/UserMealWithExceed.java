@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import lombok.Data;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +12,6 @@ import java.time.format.DateTimeFormatter;
  */
 @Data
 public class UserMealWithExceed {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final LocalDateTime dateTime;
     private final String description;
@@ -21,6 +21,6 @@ public class UserMealWithExceed {
 
     private String formatDateTime;
     public String getFormatDateTime(){
-        return dateTime.format(formatter);
+        return DateTimeUtil.toString(dateTime);
     }
 }
