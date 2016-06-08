@@ -74,6 +74,7 @@
             <tr>
                 <td colspan="2" align="left">
                     <input type="submit" value="Сохранить" />
+                    <input type="button" value="Отменить" onclick="window.location='meals'"/>
                 </td>
 
             </tr>
