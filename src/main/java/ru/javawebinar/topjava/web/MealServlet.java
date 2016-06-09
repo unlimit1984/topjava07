@@ -5,8 +5,8 @@ import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.UserMealsUtil;
-import ru.javawebinar.topjava.web.dao.UserMealRepository;
 import ru.javawebinar.topjava.web.dao.MemoryRepositoryIml;
+import ru.javawebinar.topjava.web.dao.UserMealRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,11 +16,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -32,8 +30,6 @@ public class MealServlet extends HttpServlet {
     private static final Logger LOG = getLogger(MealServlet.class);
 
     private UserMealRepository repository;
-
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void init() throws ServletException {
