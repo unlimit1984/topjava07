@@ -58,7 +58,7 @@ public class InMemoryUserMealRepositoryImpl implements UserMealRepository {
 
     @Override
     public Collection<UserMeal> getAll(int userId) {
-        return repository.get(userId).values()
+        return repository.getOrDefault(userId,Collections.emptyMap()).values()
                 .stream()
                 .sorted((um1, um2) -> um2.getDateTime().compareTo(um1.getDateTime()))
                 .collect(Collectors.toList());

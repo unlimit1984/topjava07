@@ -3,9 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Java Enterprise (Topjava)</title>
+    <script language="JScript">
+        function save(){
+            if(document.getElementById('user').value=="0"){
+                alert('Choose user');
+                return false;
+            }
+        }
+
+    </script>
 </head>
 <body>
 <h2>Проект "<a href="https://github.com/JavaWebinar/topjava07" target="_blank">Java Enterprise (Topjava)"</a></h2>
+<hr>
+<form method="post" action="users">
+    User:
+    <select id="user" name="user">
+        <option value="0">Choose...</option>
+        <option value="1">User1</option>
+        <option value="2">User2</option>
+    </select>
+    <input type="submit" value="Выбрать" onclick="save()">
+</form>
 <hr>
 <ul>
     <li><a href="users">User List</a></li>

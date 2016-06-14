@@ -50,6 +50,8 @@ public class MealServlet extends HttpServlet {
             userMealRestController.create(request,response);
         } else if(action.equals("update")){
             userMealRestController.update(request,response);
+        } else if(action.equals("filter")){
+            userMealRestController.showFiltered(request,response);
         }
     }
 }

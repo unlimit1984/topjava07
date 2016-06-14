@@ -18,7 +18,37 @@
 <body>
 <section>
     <h2><a href="index.html">Home</a></h2>
-    <h3>Meal list</h3>
+    <h3>Meal list of user: ${user}</h3>
+
+
+    <form method="get" action="meals">
+        <input type="hidden" name="action" value="filter">
+        <table border="1" cellpadding="8" cellspacing="0">
+            <tr align="right">
+                <td>
+                    From Date: <input type="date" name="fromDate" value="${fromDate}" style="width: 140px;"></dd>
+                </td>
+                <td>
+                    To Date: <input type="date" name="toDate" value="${toDate}" style="width: 140px;"></dd>
+                </td>
+            </tr>
+            <tr align="right">
+                <td>
+                    From Time: <input type="time" name="fromTime" value="${fromTime}" style="width: 140px;"></dd>
+                </td>
+                <td>
+                    To Time: <input type="time" name="toTime" value="${toTime}" style="width: 140px;"></dd>
+                </td>
+            </tr>
+            <tr align="right">
+                <td colspan="2">
+                    <button type="submit">Filter</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+
     <a href="meals?action=create">Add Meal</a>
     <hr>
     <table border="1" cellpadding="8" cellspacing="0">
