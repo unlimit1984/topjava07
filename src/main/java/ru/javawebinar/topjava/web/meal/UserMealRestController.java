@@ -100,7 +100,7 @@ public class UserMealRestController {
         try {
             toTime = LocalTime.parse(request.getParameter("toTime"));
         } catch (DateTimeParseException e) {
-            toTime = LocalTime.of(23,59);
+            toTime = LocalTime.of(23, 59);
         }
 
         LocalDateTime from = LocalDateTime.of(fromDate, fromTime);
@@ -111,8 +111,13 @@ public class UserMealRestController {
         request.setAttribute("toDate", toDate);
         request.setAttribute("toTime", toTime);
 
-        request.setAttribute("mealList",
-                UserMealsUtil.getFilteredByDateTime(service.getAll(LoggedUser.id()), from, to, UserMealsUtil.DEFAULT_CALORIES_PER_DAY));
+        if (fromDate.equals(LocalDate.MIN) && toDate.equals(LocalDate.MAX)) {
+            request.setAttribute("mealList",
+                    UserMealsUtil.getFilteredWithExceeded(service.getAll(LoggedUser.id()), fromTime, toTime, UserMealsUtil.DEFAULT_CALORIES_PER_DAY));
+        } else {
+            request.setAttribute("mealList",
+                    UserMealsUtil.getFilteredByDateTime(service.getAll(LoggedUser.id()), from, to, UserMealsUtil.DEFAULT_CALORIES_PER_DAY));
+        }
 
         request.getRequestDispatcher("/mealList.jsp").forward(request, response);
     }
