@@ -25,7 +25,7 @@
 </head>
 <body>
 <section>
-    <h2><a href="">Home</a></h2>
+    <h2><a href="index.html">Home</a></h2>
     <h3>Edit meal</h3>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.UserMeal" scope="request"/>
