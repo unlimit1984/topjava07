@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.UserMeal;
-import ru.javawebinar.topjava.model.to.UserMealWithExceed;
+import ru.javawebinar.topjava.dto.UserMealWithExceed;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
