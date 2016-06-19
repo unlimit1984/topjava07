@@ -4,29 +4,12 @@
 <html>
 <head>
     <title>Meal</title>
-    <style>
-        dl {
-            background: none repeat scroll 0 0 #FAFAFA;
-            margin: 8px 0;
-            padding: 0;
-        }
-
-        dt {
-            display: inline-block;
-            width: 170px;
-        }
-
-        dd {
-            display: inline-block;
-            margin-left: 8px;
-            vertical-align: top;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <section>
-    <h2><a href="">Home</a></h2>
-    <h3>Edit meal</h3>
+    <h2><a href="index.html">Home</a></h2>
+    <h3>${param.action == 'create' ? 'Create meal' : 'Edit meal'}</h3>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.UserMeal" scope="request"/>
     <form method="post" action="meals">
