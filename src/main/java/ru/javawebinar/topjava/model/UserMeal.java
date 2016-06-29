@@ -1,8 +1,7 @@
 package ru.javawebinar.topjava.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -17,12 +16,13 @@ import java.time.LocalDateTime;
         @NamedQuery(name = UserMeal.GET_ALL, query =        "SELECT m FROM UserMeal m WHERE m.user.id=?1 ORDER BY m.dateTime DESC"),
         @NamedQuery(name = UserMeal.GET_BETWEEN, query =    "SELECT m FROM UserMeal m " +
                                                             "WHERE  m.user.id=:user_id AND " +
-                                                                    ":startDate<=m.dateTime AND m.dateTime<=:endDate " +
+                                                                    "m.dateTime BETWEEN :startDate AND :endDate " +
+                                                                    //":startDate<=m.dateTime AND m.dateTime<=:endDate " +
                                                                 "ORDER BY m.dateTime DESC")
 })
 
 @Entity
-@Table(name = "meals"/*, uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id, date_time"}, name = "meals_unique_user_datetime_idx")}*/)
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class UserMeal extends BaseEntity {
 
     public static final String DELETE = "UserMeal.delete";
@@ -32,15 +32,15 @@ public class UserMeal extends BaseEntity {
     public static final String GET_BETWEEN = "UserMeal.getBetween";
 
     @Column(name = "date_time", nullable = false)
-    @NotEmpty
+    @NotNull
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
-    @NotEmpty
+    @NotNull
     private String description;
 
     @Column(name = "calories", nullable = false)
-    @NotEmpty
+    @NotNull
     protected int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
