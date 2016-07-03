@@ -27,33 +27,34 @@ public class JpaUserMealRepositoryImpl implements UserMealRepository {
     @Override
     @Transactional
     public UserMeal save(UserMeal userMeal, int userId) {
-        if (userMeal.isNew()) {
-            User ref = em.getReference(User.class, userId);
-            //User ref = em.find(User.class, userId);
-            userMeal.setUser(ref);
-            em.persist(userMeal);
-            return userMeal;
-        } else {
-            try {
+        User ref = em.getReference(User.class, userId);
+        //User ref = em.find(User.class, userId);
+        userMeal.setUser(ref);
 
-                int updateRows =  em.createNamedQuery(UserMeal.UPDATE)
-                        .setParameter(1, userMeal.getDateTime())
-                        .setParameter(2, userMeal.getDescription())
-                        .setParameter(3, userMeal.getCalories())
-                        .setParameter(4, userMeal.getId())
-                        .setParameter(5, userId)
-                        .executeUpdate();
-                if(updateRows==1){
-                    //return em.find(UserMeal.class, userMeal.getId());
-                    return em.getReference(UserMeal.class, userMeal.getId());
-                }
-                else{
-                    return null;
-                }
-            } catch (NoResultException e){
+        if (userMeal.isNew()) {
+            em.persist(userMeal);
+        } else {
+            //1st approach
+            if(get(userMeal.getId(), userId) == null){
                 return null;
             }
+            em.merge(userMeal);
+
+            //2nd approach
+//            int updateRows =  em.createNamedQuery(UserMeal.UPDATE)
+//                    .setParameter(1, userMeal.getDateTime())
+//                    .setParameter(2, userMeal.getDescription())
+//                    .setParameter(3, userMeal.getCalories())
+//                    .setParameter(4, userMeal.getId())
+//                    .setParameter(5, userId)
+//                    .executeUpdate();
+//            if(updateRows!=1){
+//                //return em.find(UserMeal.class, userMeal.getId());
+//                //return em.getReference(UserMeal.class, userMeal.getId());
+//                return null;
+//            }
         }
+        return userMeal;
     }
 
     @Override
