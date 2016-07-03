@@ -1,8 +1,10 @@
 package ru.javawebinar.topjava.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -10,29 +12,25 @@ import java.time.LocalDateTime;
  * 11.01.2015.
  */
 @NamedQueries({
-        @NamedQuery(name = UserMeal.DELETE, query =         "DELETE FROM UserMeal m WHERE m.id=:id AND m.user.id=:user_id"),
-        @NamedQuery(name = UserMeal.UPDATE, query =         "UPDATE UserMeal m SET m.dateTime=?1, m.description=?2, m.calories=?3 " +
-                                                                "WHERE m.id=?4 AND m.user.id=?5"),
-        @NamedQuery(name = UserMeal.GET, query =            "SELECT m FROM UserMeal m WHERE m.id=:id AND m.user.id=:user_id"),
-        @NamedQuery(name = UserMeal.GET_ALL, query =        "SELECT m FROM UserMeal m WHERE m.user.id=?1 ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = UserMeal.GET_BETWEEN, query =    "SELECT m FROM UserMeal m " +
-                                                            "WHERE  m.user.id=:user_id AND " +
-                                                                    ":startDate<=m.dateTime AND m.dateTime<=:endDate " +
-                                                                "ORDER BY m.dateTime DESC")
+        @NamedQuery(name = UserMeal.GET, query = "SELECT m FROM UserMeal m WHERE m.id=:id AND m.user.id=:userId"),
+        @NamedQuery(name = UserMeal.ALL_SORTED, query = "SELECT m FROM UserMeal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = UserMeal.DELETE, query = "DELETE FROM UserMeal m WHERE m.id=:id AND m.user.id=:userId"),
+        @NamedQuery(name = UserMeal.GET_BETWEEN, query = "SELECT m FROM UserMeal m "+
+                                                          "WHERE m.user.id=:userId AND m.dateTime BETWEEN :startDate AND :endDate ORDER BY m.dateTime DESC"),
+
+//        @NamedQuery(name = UserMeal.UPDATE, query = "UPDATE UserMeal m SET m.dateTime = :datetime, m.calories= :calories," +
+//                "m.description=:desc where m.id=:id and m.user.id=:userId")
 })
-
 @Entity
-@Table(name = "meals"/*, uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id, date_time"}, name = "meals_unique_user_datetime_idx")}*/)
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class UserMeal extends BaseEntity {
-
-    public static final String DELETE = "UserMeal.delete";
-    public static final String UPDATE = "UserMeal.update";
     public static final String GET = "UserMeal.get";
-    public static final String GET_ALL = "UserMeal.getAll";
+    public static final String ALL_SORTED = "UserMeal.getAll";
+    public static final String DELETE = "UserMeal.delete";
     public static final String GET_BETWEEN = "UserMeal.getBetween";
 
     @Column(name = "date_time", nullable = false)
-    @NotEmpty
+    @NotNull
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
@@ -40,10 +38,11 @@ public class UserMeal extends BaseEntity {
     private String description;
 
     @Column(name = "calories", nullable = false)
-    @NotEmpty
+    @Range(min = 10, max = 5000)
     protected int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public UserMeal() {
