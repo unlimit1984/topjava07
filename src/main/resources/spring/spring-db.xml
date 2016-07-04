@@ -11,21 +11,21 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <!--<context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>-->
-
-    <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
-    <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
-
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
         <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
         <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-          p:dataSource-ref="dataSource"
-          p:packagesToScan="ru.javawebinar.**.model">
-        <!--p:persistenceUnitName="persistenceUnit">-->
+          p:dataSource-ref="dataSource">
+          <!--p:packagesToScan="ru.javawebinar.**.model, ru.javawebinar.**.converter">-->
 
+        <property name="packagesToScan">
+            <array>
+                <value>ru.javawebinar.**.model</value>
+                <value>ru.javawebinar.**.converter</value>
+            </array>
+        </property>
         <property name="jpaPropertyMap">
             <map>
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).FORMAT_SQL}" value="${hibernate.format_sql}"/>
@@ -47,16 +47,16 @@
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="entityManagerFactory"/>
 
-    <!--
-        <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
-        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-            <constructor-arg ref="dataSource"/>
-        </bean>
+    <beans profile="postgres">
+        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
 
-        <bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-            <constructor-arg ref="dataSource"/>
-        </bean>
-    -->
+        <bean id="dataSource"
+              class="org.apache.tomcat.jdbc.pool.DataSource"
+              p:driverClassName="${database.driverClassName}"
+              p:url="${database.url}"
+              p:username="${database.username}"
+              p:password="${database.password}"/>
+    </beans>
 
     <beans profile="hsqldb">
         <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
@@ -70,21 +70,22 @@
               p:password="${database.password}"/>
     </beans>
 
-    <beans profile="postgres">
-        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
-
-        <bean id="dataSource"
-              class="org.apache.tomcat.jdbc.pool.DataSource"
-              p:driverClassName="${database.driverClassName}"
-              p:url="${database.url}"
-              p:username="${database.username}"
-              p:password="${database.password}"/>
-    </beans>
-
     <beans profile="jdbc">
+        <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
+        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+
+        <bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+
     </beans>
     <beans profile="jpa">
+        <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>
     </beans>
     <beans profile="datajpa">
+        <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
+        <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
     </beans>
 </beans>
