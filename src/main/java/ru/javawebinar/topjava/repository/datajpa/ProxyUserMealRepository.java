@@ -16,18 +16,17 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface ProxyUserMealRepository extends JpaRepository<UserMeal, Integer> {
 
-//    @Override
-//    @Transactional
-//    UserMeal save(UserMeal meal);
+    @Override
+    @Transactional
+    UserMeal save(UserMeal meal);
 
     @Transactional
     @Modifying
     @Query("DELETE FROM #{#entityName} m WHERE m.id=?1 AND m.user.id=?2")
     int delete(int id, int user_id);
 
-
-    @Query("SELECT m FROM UserMeal m WHERE m.id=?1 AND m.user.id=?2")
-    UserMeal get(int id, int userId);
+    @Query(name = UserMeal.GET)
+    UserMeal get(@Param("id") int id, @Param("userId") int userId);
 
     @Query(name = UserMeal.ALL_SORTED)
     List<UserMeal> getAll(@Param("userId") int userId);
