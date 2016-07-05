@@ -46,6 +46,12 @@ public class JpaUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User getWithMeal(int id) {
+        return em.createNamedQuery(User.FIND_ONE_DEEP, User.class)
+                    .setParameter(1,id).getSingleResult();
+    }
+
+    @Override
     @Transactional
     public boolean delete(int id) {
 

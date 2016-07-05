@@ -2,15 +2,9 @@ package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ru.javawebinar.topjava.Profiles;
+import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.UserTestData.*;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -22,7 +16,7 @@ import java.util.Collections;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
-public abstract class UserServiceTest extends ServiceTest{
+public abstract class UserServiceTest extends ServiceTest {
 
     @Autowired
     protected UserService service;
@@ -31,7 +25,7 @@ public abstract class UserServiceTest extends ServiceTest{
     public void setUp() throws Exception {
         service.evictCache();
     }
-        
+
     @Test
     public void testSave() throws Exception {
         TestUser tu = new TestUser(null, "New", "new@gmail.com", "newPass", 1555, false, Collections.singleton(Role.ROLE_USER));
@@ -60,6 +54,19 @@ public abstract class UserServiceTest extends ServiceTest{
     public void testGet() throws Exception {
         User user = service.get(USER_ID);
         MATCHER.assertEquals(USER, user);
+    }
+
+    @Test
+    public void testGetWithMeal() throws Exception {
+        User user = service.getWithMeal(USER_ID);
+        MATCHER.assertEquals(USER, user);
+        MealTestData.MATCHER
+                .assertCollectionEquals(Arrays.asList(  MealTestData.MEAL6,
+                                                        MealTestData.MEAL5,
+                                                        MealTestData.MEAL4,
+                                                        MealTestData.MEAL3,
+                                                        MealTestData.MEAL2,
+                                                        MealTestData.MEAL1), user.getMealList());
     }
 
     @Test(expected = NotFoundException.class)

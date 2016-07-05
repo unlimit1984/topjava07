@@ -9,9 +9,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.UserMealRepository;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +25,11 @@ import java.util.List;
 public class JdbcUserRepositoryImpl implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+
+    //private static final BeanPropertyRowMapper<UserMeal> ROW_MAPPER_UserMeal = BeanPropertyRowMapper.newInstance(UserMeal.class);
+
+    @Autowired
+    UserMealRepository userMealRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -69,6 +76,17 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Override
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        return DataAccessUtils.singleResult(users);
+    }
+
+    @Override
+    public User getWithMeal(int id) {
+        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+
+        for(User u: users){
+            u.setMealList(new ArrayList<>(userMealRepository.getAll(u.getId())));
+        }
+
         return DataAccessUtils.singleResult(users);
     }
 

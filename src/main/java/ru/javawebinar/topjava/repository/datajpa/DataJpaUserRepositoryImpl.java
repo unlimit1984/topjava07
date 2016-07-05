@@ -36,6 +36,11 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User getWithMeal(int id) {
+        return proxy.findOneDeep(id);
+    }
+
+    @Override
     public User getByEmail(String email) {
         return proxy.getByEmail(email);
     }
