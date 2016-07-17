@@ -7,11 +7,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.sql.DataSource;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -31,6 +37,9 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private SimpleJdbcInsert insertUser;
+
+    @Autowired
+    private DataSourceTransactionManager transactionManager;
 
     @Autowired
     public JdbcUserRepositoryImpl(DataSource dataSource) {
@@ -79,6 +88,25 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+
+        TransactionDefinition txDef = new DefaultTransactionDefinition();
+        TransactionStatus txStatus = transactionManager.getTransaction(txDef);
+        List<User> users;
+
+        try{
+            users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+            for(User user: users){
+                List<Role> roles = jdbcTemplate.query("SELECT role FROM user_roles WHERE user_id=? ORDER BY role", (rs, rowNum) -> {
+                    return Role.valueOf(rs.getString("role"));
+                },user.getId());
+                user.setRoles(new HashSet<>(roles));
+            }
+            transactionManager.commit(txStatus);
+        } catch (Exception e){
+            transactionManager.rollback(txStatus);
+            throw e;
+        }
+
+        return users;
     }
 }
