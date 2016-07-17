@@ -8,7 +8,7 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <form method="post" action="users">
-    Login as: <select name="userId">
+        <fmt:message key="app.loginAs"/>: <select name="userId">
     <option value="100000" selected>User</option>
     <option value="100001">Admin</option>
 </select>
