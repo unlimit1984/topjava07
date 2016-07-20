@@ -7,6 +7,7 @@ import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,7 +43,8 @@ public class JpaUserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(int id) {
-        return em.find(User.class, id);
+        return em.find(User.class, id,
+                Collections.singletonMap("javax.persistence.fetchgraph", em.getEntityGraph(User.GRAPH_WITH_ROLES)));
     }
 
     @Override

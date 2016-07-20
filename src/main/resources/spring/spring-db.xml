@@ -20,6 +20,8 @@
 
     <!-- Choose profile from (hsqldb, postgres) and (jdbc,datajpa,jpa) -->
 
+    <tx:annotation-driven/>
+
     <beans profile="hsqldb">
         <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
 
@@ -57,6 +59,11 @@
         <bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
             <constructor-arg ref="dataSource"/>
         </bean>
+
+        <bean id="transactionManager"
+              class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <property name="dataSource" ref="dataSource" />
+        </bean>
     </beans>
 
     <beans profile="datajpa,jpa">
@@ -77,6 +84,11 @@
                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_QUERY_CACHE}" value="false"/> <!--default-->
                     <entry key="#{T(org.hibernate.cache.ehcache.AbstractEhcacheRegionFactory).NET_SF_EHCACHE_CONFIGURATION_RESOURCE_NAME}" value="cache/ehcache.xml"/>
 
+<!--
+                    <entry key="javax.persistence.schema-generation.scripts.action" value="drop-and-create"/>
+                    <entry key="javax.persistence.schema-generation.scripts.create-target" value="${TOPJAVA_ROOT}/config/ddl/create.ddl"/>
+                    <entry key="javax.persistence.schema-generation.scripts.drop-target" value="${TOPJAVA_ROOT}/config/ddl/drop.ddl"/>
+-->
                 </map>
             </property>
 
@@ -86,8 +98,6 @@
                 </bean>
             </property>
         </bean>
-
-        <tx:annotation-driven/>
 
         <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
         <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
