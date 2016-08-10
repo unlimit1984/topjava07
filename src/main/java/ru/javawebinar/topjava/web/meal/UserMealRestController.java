@@ -1,13 +1,11 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.to.UserMealWithExceed;
 
-import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,28 +23,39 @@ public class UserMealRestController extends AbstractUserMealController {
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserMealWithExceed> getBetween()
+    public List<UserMealWithExceed> getAll(){
+        return super.getAll();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserMealWithExceed> getBetween(LocalDateTime start, LocalDateTime end){
+        return super.getBetween(start.toLocalDate(), start.toLocalTime(), end.toLocalDate(), end.toLocalTime());
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") int id){
         super.delete(id);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void update(@RequestBody UserMeal meal, @PathVariable("id") int id){
         super.update(meal,id);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserMeal> create(@RequestBody UserMeal meal){
-
-        UserMeal created = super.create(meal);
-
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-
-
-        return ResponseEntity.created(uriOfNewResource).body(created);
+//    public ResponseEntity<UserMeal> create(@RequestBody UserMeal meal){
+//
+//        UserMeal created = super.create(meal);
+//
+//        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path(REST_URL + "/{id}")
+//                .buildAndExpand(created.getId()).toUri();
+//
+//
+//        return ResponseEntity.created(uriOfNewResource).body(created);
+//    }
+    public UserMeal create(@RequestBody UserMeal meal){
+        return super.create(meal);
     }
+
 }
