@@ -27,10 +27,10 @@ public class UserMealRestController extends AbstractUserMealController {
         return super.getAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserMealWithExceed> getBetween(LocalDateTime start, LocalDateTime end){
-        return super.getBetween(start.toLocalDate(), start.toLocalTime(), end.toLocalDate(), end.toLocalTime());
-    }
+//    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public List<UserMealWithExceed> getBetween(LocalDateTime start, LocalDateTime end){
+//        return super.getBetween(start.toLocalDate(), start.toLocalTime(), end.toLocalDate(), end.toLocalTime());
+//    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") int id){

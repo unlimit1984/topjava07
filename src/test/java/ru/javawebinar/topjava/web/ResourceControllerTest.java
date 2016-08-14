@@ -24,33 +24,7 @@ import static ru.javawebinar.topjava.Profiles.DB_IMPLEMENTATION;
 /**
  * Created by vladimir on 8/1/16.
  */
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-mvc.xml",
-        "classpath:spring/spring-db.xml"
-})
-@WebAppConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles({ACTIVE_DB, DB_IMPLEMENTATION})
-public class ResourceControllerTest {
-
-    private static final CharacterEncodingFilter CHARACTER_ENCODING_FILTER = new CharacterEncodingFilter();
-
-    protected MockMvc mockMvc;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-
-    @PostConstruct
-    void postConstruct() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
-                .addFilter(CHARACTER_ENCODING_FILTER)
-                .build();
-    }
-
-
+public class ResourceControllerTest extends AbstractControllerTest{
 
     @Test
     public void testResources() throws Exception {
