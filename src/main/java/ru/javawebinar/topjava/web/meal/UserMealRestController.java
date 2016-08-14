@@ -1,10 +1,14 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.to.UserMealWithExceed;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,24 +17,26 @@ import java.util.List;
  * 06.03.2015.
  */
 @RestController
-@RequestMapping(UserMealRestController.REST_URL)
+@RequestMapping(value = UserMealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserMealRestController extends AbstractUserMealController {
-    static final String REST_URL = "/rest/meals";
+    static final String REST_URL = "/rest/profile/meals";
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public UserMeal get(@PathVariable("id") int id){
         return super.get(id);
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET)
     public List<UserMealWithExceed> getAll(){
         return super.getAll();
     }
 
-//    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public List<UserMealWithExceed> getBetween(LocalDateTime start, LocalDateTime end){
-//        return super.getBetween(start.toLocalDate(), start.toLocalTime(), end.toLocalDate(), end.toLocalTime());
-//    }
+    @RequestMapping(value = "/between", method = RequestMethod.GET)
+    public List<UserMealWithExceed> getBetween(
+            @RequestParam(value = "startDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam(value = "endDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end){
+        return super.getBetween(start.toLocalDate(), start.toLocalTime(), end.toLocalDate(), end.toLocalTime());
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") int id){
@@ -42,20 +48,16 @@ public class UserMealRestController extends AbstractUserMealController {
         super.update(meal,id);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<UserMeal> create(@RequestBody UserMeal meal){
-//
-//        UserMeal created = super.create(meal);
-//
-//        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path(REST_URL + "/{id}")
-//                .buildAndExpand(created.getId()).toUri();
-//
-//
-//        return ResponseEntity.created(uriOfNewResource).body(created);
-//    }
-    public UserMeal create(@RequestBody UserMeal meal){
-        return super.create(meal);
-    }
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserMeal> createWithLocation(@RequestBody UserMeal meal){
 
+        UserMeal created = super.create(meal);
+
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+
+
+        return ResponseEntity.created(uriOfNewResource).body(created);
+    }
 }
